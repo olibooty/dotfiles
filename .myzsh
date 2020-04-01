@@ -1,0 +1,109 @@
+# custom zsh config and bash helper functions
+
+tabs -4
+
+logstat () {
+    git log --graph --stat --pretty=short --decorate --color
+}
+
+# uses lib 'lf', and cd's into selected directory
+lfcd () {
+    tmp="$(mktemp)"
+    lf -last-dir-path="$tmp" "$@"
+    if [ -f "$tmp" ]; then
+        dir="$(cat "$tmp")"
+    rm -f "$tmp"
+    [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
+    fi
+}
+
+run_new_tab () {
+    osascript \
+        -e 'tell application "iTerm2" to tell current window to set newWindow to (create tab with default profile)'\
+        -e "tell application \"iTerm2\" to tell current session of newWindow to write text \"${@}\""
+}
+
+greps () {
+    ps aux | grep -v grep | grep $1
+}
+
+is_port_in_use () {
+    local PORT=${1?Error: include a port, silly!}
+    lsof -i :$PORT
+}
+
+kill_my_process () {
+    local SIGNATURE="kill_my_process [-f | --force (optional)] [PID]";
+
+    if [[ $# -eq 0 ]]; then
+        echo $SIGNATURE;
+        return;
+    fi
+
+    if [[ $# -eq 1 ]]; then
+        if [[ $1 -eq '-f' ]]; then
+            echo $SIGNATURE;
+            return;
+        fi
+    fi
+
+    if [[ $# -gt 1 ]]; then
+        if [ $1 == "-f" | $1 == "--force" ]; then
+            COMMAND=-9;
+            shift;
+        fi
+    else
+        COMMAND=-15;
+    fi
+
+    echo "killing process $1"
+
+    kill $COMMAND $1
+}
+
+kill_my_port () {
+    local PORT=${1?Error: include a port, silly!};
+
+    if [[ $(is_port_in_use $PORT) ]]; then
+        PROCESS=$(is_port_in_use $PORT | awk '{ print $2 }');
+        PID=${PROCESS[(w)2]};
+
+        is_port_in_use $PORT;
+        echo "Port $PORT | Process $PID";
+
+        kill_my_process $PID;
+    else
+        echo "Port $PORT is not in use"
+    fi
+}
+
+mongobg () {
+    echo "[Mongo] Running in background";
+    mongod --config /usr/local/etc/mongod.conf --fork
+}
+
+mongo_check () {
+    echo "grep mongod..."
+    greps mongod
+}
+
+# Backs up a mongo db to local
+# from https://docs.mongodb.com/manual/reference/program/mongodump/
+# $1 = uri string
+# $2 = collection name
+# $3 = [OPTIONAL] rename collection
+backupDb () {
+    echo "$@"
+    if [[ $# -lt 2 ]] ; then
+        echo "not enough arguments supplied"
+        return
+    elif [[ $# -eq 2 ]] ; then
+        temp="$2"
+    else
+        temp="$3"
+    fi
+
+    mongodump --archive --uri="$1" | mongorestore --archive --nsFrom="$2.*" --nsTo="$temp.*"
+}
+
+echo ".myzsh loaded";
