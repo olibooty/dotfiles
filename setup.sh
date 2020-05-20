@@ -36,6 +36,9 @@ sudo bash n lts
 brew install yarn
 yarn global add {nodemon,create-react-app,parcel,typescript}
 
+# deno!
+curl -fsSL https://deno.land/x/install/install.sh | sh
+
 # prettify vim
   # install pathogen
 mkdir -p ~/.vim/autoload ~/.vim/bundle && \
