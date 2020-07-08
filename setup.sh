@@ -12,6 +12,7 @@ graphql-playground,\
 visual-studio-code,\
 mongodb-compass,\
 postman,\
+insomnia,\
 iterm2\
 }
 
