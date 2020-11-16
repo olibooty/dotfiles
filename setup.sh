@@ -20,7 +20,9 @@ iterm2\
 brew cask install {\
 firefox,\
 google-{chrome,chat},\
-spotify\
+spotify,\
+monitorcontrol,\
+rectangle\
 }
 
 # get some db's involved
