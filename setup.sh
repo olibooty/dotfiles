@@ -19,7 +19,7 @@ iterm2\
 # brew other apps
 brew cask install {\
 firefox,\
-google-{chrome,chat},\
+google-chrome,\
 spotify,\
 monitorcontrol,\
 rectangle\
