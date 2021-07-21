@@ -106,4 +106,19 @@ backupDb () {
     mongodump --archive --uri="$1" | mongorestore --archive --nsFrom="$2.*" --nsTo="$temp.*"
 }
 
+# Restores a mongo db collection to local
+# from https://docs.mongodb.com/manual/reference/program/mongodump/
+# $1 = uri string
+# $2 = collection name
+backupCollection () {
+    echo "$@"
+    if [[ $# -lt 2 ]] ; then
+        echo "not enough arguments supplied"
+        return
+    fi
+
+    mongodump --archive --uri="$1" --collection="$2" \
+    | mongorestore --archive --nsFrom="$2" --nsTo="$2"
+}
+
 echo ".myzsh loaded";
