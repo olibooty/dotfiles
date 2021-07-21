@@ -90,8 +90,8 @@ mongo_check () {
 # Backs up a mongo db to local
 # from https://docs.mongodb.com/manual/reference/program/mongodump/
 # $1 = uri string
-# $2 = collection name
-# $3 = [OPTIONAL] rename collection
+# $2 = db name
+# $3 = [OPTIONAL] rename db
 backupDb () {
     echo "$@"
     if [[ $# -lt 2 ]] ; then
